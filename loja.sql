@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 06-Ago-2026 às 15:33
+-- Tempo de geração: 20-Ago-2026 às 15:46
 -- Versão do servidor: 10.4.22-MariaDB
 -- versão do PHP: 8.1.2
 
@@ -26,6 +26,29 @@ USE `loja`;
 -- --------------------------------------------------------
 
 --
+-- Estrutura da tabela `filmes_nacionais`
+--
+
+CREATE TABLE `filmes_nacionais` (
+  `id` int(11) NOT NULL,
+  `titulo` varchar(100) NOT NULL,
+  `diretor` varchar(100) NOT NULL,
+  `genero` varchar(100) NOT NULL,
+  `duracao_min` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `filmes_nacionais`
+--
+
+INSERT INTO `filmes_nacionais` (`id`, `titulo`, `diretor`, `genero`, `duracao_min`) VALUES
+(1, 'Ainda Estou Aqui', 'Walter Salles', 'Drama', 135),
+(2, 'Salve Rosa', 'Susanna Lira', 'Suspense Psicológico', 95),
+(4, 'O Auto da Compadecida', 'Ariano Suassuna', 'Comédia', 104);
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura da tabela `produtos`
 --
 
@@ -41,11 +64,18 @@ CREATE TABLE `produtos` (
 --
 
 INSERT INTO `produtos` (`id`, `nome`, `preco`, `quantidade`) VALUES
-(1, 'Computador', 2500, 10);
+(1, 'Computador', 2400, 19);
 
 --
 -- Índices para tabelas despejadas
 --
+
+--
+-- Índices para tabela `filmes_nacionais`
+--
+ALTER TABLE `filmes_nacionais`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ix_filmes_nacionais_id` (`id`);
 
 --
 -- Índices para tabela `produtos`
@@ -57,6 +87,12 @@ ALTER TABLE `produtos`
 --
 -- AUTO_INCREMENT de tabelas despejadas
 --
+
+--
+-- AUTO_INCREMENT de tabela `filmes_nacionais`
+--
+ALTER TABLE `filmes_nacionais`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`

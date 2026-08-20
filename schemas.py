@@ -14,3 +14,17 @@ class ProdutoResponse(ProdutoBase):
 
 class Config:
     from_attributes = True
+
+
+class FilmesBase(BaseModel):
+    titulo: str
+    diretor: str
+    genero: str
+    duracao_min: int
+
+class FilmesCreate(FilmesBase):
+    pass
+
+class FilmesResponse(FilmesBase):
+    id: int
+

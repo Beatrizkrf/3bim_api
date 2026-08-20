@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from database import Base, engine, get_db
 from models import ProdutoDB
 from schemas import ProdutoCreate, ProdutoResponse
+from models import FilmesDB
+from schemas import FilmesCreate, FilmesResponse
 
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -64,3 +66,52 @@ def atualizar_produto(produto_id: int, dados: ProdutoCreate, db: Session = Depen
     db.refresh(produto)
     return produto    
 
+
+#FILMESSSSS
+
+# GET  -> retorna todos os produtos
+@app.get('/filmes_nacionais', response_model=list[FilmesResponse])
+def listar_filmes(db: Session = Depends(get_db)):
+    return db.query(FilmesDB).all()
+
+
+# GET -> retorna um único produto pelo id
+@app.get('/filmes_nacionais/{produto_id}', response_model=FilmesResponse)
+def obter_filme(filmes_nacionais_id: int, db: Session = Depends(get_db)):
+    filmes_nacionais = db.query(FilmesDB).filter(FilmesDB.id == filmes_nacionais_id).first()
+    if filmes_nacionais is None:
+        raise HTTPException(status_code=404, detail='Filme não encontrado')
+    return filmes_nacionais
+
+#POST
+@app.post('/filmes_nacionais', response_model=FilmesResponse, status_code=201)
+def criar_filme(filmes_nacionais: FilmesCreate, db: Session = Depends(get_db)):
+    novo_filme = FilmesDB(**filmes_nacionais.dict()) 
+    db.add(novo_filme) #insert into 
+    db.commit()
+    db.refresh(novo_filme)
+    return novo_filme
+
+# DELETE -> remove um produto do banco de dados
+@app.delete('/filmes_nacionais/{filmes_nacionais_id}', status_code=204)
+def remover_filme(filmes_nacionais_id: int, db: Session = Depends(get_db)):
+    filmes_nacionais = db.query(FilmesDB).filter(FilmesDB.id == filmes_nacionais_id).first()
+    if filmes_nacionais is None:
+        raise HTTPException(status_code=404, detail='Filme não encontrado')
+    db.delete(filmes_nacionais)
+    db.commit()
+    return HTTPException(status_code=204, detail='Filme deletado com sucesso')
+
+# PUT -> atualiza um produto existente no banco
+@app.put('/filmes_nacionais/{filmes_nacionais_id}', response_model=FilmesResponse)
+def atualizar_filme(filmes_nacionais_id: int, dados: FilmesCreate, db: Session = Depends(get_db)):
+    filmes_nacionais = db.query(FilmesDB).filter(FilmesDB.id == filmes_nacionais_id).first()
+    if filmes_nacionais is None:
+        raise HTTPException(status_code=404, detail='Filme não encontrado')
+    filmes_nacionais.titulo = dados.titulo
+    filmes_nacionais.diretor = dados.diretor
+    filmes_nacionais.genero = dados.genero
+    filmes_nacionais.duracao_min = dados.duracao_min
+    db.commit()
+    db.refresh(filmes_nacionais)
+    return filmes_nacionais    
