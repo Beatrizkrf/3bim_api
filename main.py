@@ -20,6 +20,11 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+# GET /produtos/{id} -> retorna todos os produtos
+@app.get('/produtos', response_model=list[ProdutoResponse])
+def listar_produtos(db: Session = Depends(get_db)):
+    return db.query(ProdutoDB).all()
+
 # GET /produtos/{id} -> retorna um único produto pelo id
 @app.get('/produtos/{produto_id}', response_model=ProdutoResponse)
 def obter_produto(produto_id: int, db: Session = Depends(get_db)):
@@ -45,4 +50,17 @@ def remover_produto(produto_id: int, db: Session = Depends(get_db)):
     db.delete(produto)
     db.commit()
     return ('Produto deletado com sucesso')
+
+# PUT /produtos/{id} -> atualiza um produto existente no banco
+@app.put('/produtos/{produto_id}', response_model=ProdutoResponse)
+def atualizar_produto(produto_id: int, dados: ProdutoCreate, db: Session = Depends(get_db)):
+    produto = db.query(ProdutoDB).filter(ProdutoDB.id == produto_id).first()
+    if produto is None:
+        raise HTTPException(status_code=404, detail='Produto não encontrado')
+    produto.nome = dados.nome
+    produto.preco = dados.preco
+    produto.quantidade = dados.quantidade
+    db.commit()
+    db.refresh(produto)
+    return produto    
 
