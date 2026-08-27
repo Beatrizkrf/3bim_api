@@ -9,10 +9,11 @@ from schemas import FilmesCreate, FilmesResponse
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-
-Base.metadata.create_all(bind=engine) # cria as tabelas, se ainda não existirem
 app = FastAPI()
 
+@app.on_event("startup") #o decorator se baseia em um eveto (tipo js) no caso a startup 
+def criar_tabelas():
+    Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
